@@ -1,0 +1,97 @@
+'This Tibbo BASIC application is a sample code for testing Tibbit#61 (ADC)
+'This sample is written in Tibbo BASIC.
+
+include "global.tbh"
+
+sub print_adc_value(value as real, name as string, flags as byte)
+	sys.debugprint(ftostr(value, FTOSTR_MODE_PLAIN, 8) + name)
+	if (flags and &h01) <> 0 then
+		sys.debugprint(" ADC request parameter error")
+	end if
+	if (flags and &h02) <> 0 then
+		sys.debugprint(" ADC channel error")
+	end if
+	if (flags and &h01) <> 0 then
+		sys.debugprint(" ADC timeout")
+	end if
+	if (flags and &h40) <> 0 then
+		sys.debugprint(" ADC error")
+	end if
+	if (flags and &h20) <> 0 then
+		sys.debugprint(" ADC overflow")
+	end if
+		
+	sys.debugprint(chr(13))
+end sub
+
+dim init_complete as boolean
+dim init_result as TBT61_INIT_RESULT
+dim tbt_channel as byte
+
+sub on_sys_init()
+
+	dim status as byte
+	
+	' INITIALIZE
+	
+	sys.debugprint("TBT61 initialize - ")
+
+	init_result = tbt61_init("TBT61", TBT61_VOLTAGE_TWO_DIFFERENTIAL, TBT61_PIN_CS, TBT61_PIN_CLK, TBT61_PIN_MOSI, TBT61_PIN_MISO, TBT61_PIN_SCL, TBT61_PIN_SDA, tbt_channel)
+	select case init_result
+	case TBT61_INIT_OK:
+		sys.debugprint("Init complete" + chr(13))
+		init_complete = true
+		
+	case TBT61_INIT_ERROR_SPI_NO_EMPTY_CHANNEL:
+		sys.debugprint("Init fault: SPI not available channel" + chr(13))
+		init_complete = false
+		
+	case TBT61_INT_ERROR_NO_TIBBIT_PRESENT:
+		sys.debugprint("Init fault: Tibbit not present" + chr(13))
+		init_complete = false
+		
+	case TBT61_INIT_ERROR_NO_VALID_VERSION:
+		sys.debugprint("Init fault: HW version wrong" + chr(13))
+		init_complete = false
+		
+	case TBT61_INIT_ERROR_FAULT_CHECK_POWER:
+		sys.debugprint("Init fault: Internal voltage check fault" + chr(13))
+		init_complete = false
+		
+	end select
+	
+	sys.debugprint("--------End of Sys_Init--------" + CR_LF)	
+	sys.debugprint("***************************************" + CR_LF)
+
+end sub
+
+dim timer as integer
+
+sub on_sys_timer()
+
+	dim data0, data1, data2, data3, data4, data5 as real
+	dim flags as byte
+
+	if init_result = TBT61_INIT_OK then
+
+		if timer < 10 then
+			timer = timer + 1
+		else
+			sys.debugprint("VOLTAGE MEASUREMENT " + chr(13))	
+			data0 = tbt61_read_adc(tbt_channel, 0, flags) 
+			print_adc_value(data0, "V", flags)
+			data2 = tbt61_read_adc(tbt_channel, 2, flags) 
+			print_adc_value(data2, "V", flags)	
+			
+			sys.debugprint("CURRENT MEASUREMENT " + chr(13))	
+			data4 = tbt61_read_adc(tbt_channel, 4, flags) 
+			print_adc_value(data4, "mA", flags)
+			data5 = tbt61_read_adc(tbt_channel, 5, flags) 
+			print_adc_value(data5, "mA", flags)
+			
+			sys.debugprint(chr(13))
+		end if
+
+	end if
+	
+end sub

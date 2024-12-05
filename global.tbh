@@ -1,0 +1,19 @@
+'DEFINES-------------------------------------------------------------
+#define TBT61_DEBUG_PRINT 1
+
+const CR_LF = chr(13) + chr(10)
+
+' PINS LAYOUT
+#define TBT61_PIN_CS   PL_IO_NUM_9_TX0
+#define TBT61_PIN_CLK  PL_IO_NUM_8_RX0
+#define TBT61_PIN_MOSI PL_IO_NUM_0
+#define TBT61_PIN_MISO PL_IO_NUM_16_INT0
+#define TBT61_PIN_SCL  PL_IO_NUM_11_TX1
+#define TBT61_PIN_SDA  PL_IO_NUM_10_RX1
+
+'INCLUDES------------------------------------------------------------
+include "libraries\tbt61.tbh"
+include "libraries\super_i2c.tbh"
+include "libraries\ssi.tbh"
+
+'DECLARATIONS--------------------------------------------------------
