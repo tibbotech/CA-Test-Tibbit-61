@@ -1,6 +1,6 @@
 [project]
 version=1
-platform=TPP2W(G2)
+platform=TPP3W(G2)
 src_lib_ver=2_01_05
 name=CA-Test-Tibbit-61
 output=CA-Test-Tibbit-61.tpc
@@ -13,6 +13,10 @@ transport=udp_broadcast
 address=
 [address2]
 platform=TPP2W(G2)
+transport=udp_winpcap
+address=
+[address3]
+platform=TPP3W(G2)
 transport=udp_winpcap
 address=
 [file1]

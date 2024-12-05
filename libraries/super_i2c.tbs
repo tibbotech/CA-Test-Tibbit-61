@@ -42,17 +42,22 @@ register_normal_slot:
 			if si2c_in_use(f)=NO then
 				si2c_in_use(f)=YES
 				si2c_user_signature(f)=signature
+				si2c_register=f
+#IF I2C_AVAILABLE
+				i2c.num=f
+				i2c.sdamap=sda
+				i2c.sclmap=scl
+				i2c.enabled=YES
+#ELSE
 				si2c_sda(f)=sda
 				si2c_scl(f)=scl
-				si2c_register=f
-
 				io.num=scl
 				io.state=HIGH
 				io.enabled=YES
 				io.num=sda
 				io.state=HIGH
 				io.enabled=NO
-
+#ENDIF
 				#if SI2C_DEBUG_PRINT
 					si2c_debugprint("'"+si2c_user_signature(f)+"' register i2c #"+str(f))
 				#endif
@@ -71,17 +76,27 @@ register_normal_slot:
 		end if
 
 		si2c_in_use(f)=YES
-		si2c_user_signature(f)=signature
 		si2c_sda(f)=sda
 		si2c_scl(f)=scl
+		si2c_user_signature(f)=signature
 		si2c_register=f
-
-		io.num=scl
-		io.state=HIGH
-		io.enabled=YES
-		io.num=sda
-		io.state=HIGH
-		io.enabled=NO
+#IF I2C_AVAILABLE
+		i2c.num=f
+		i2c.sdamap=sda
+		i2c.sclmap=scl
+		i2c.enabled=YES
+#ELSE
+		ssi.channel=f
+		ssi.enabled=NO
+		ssi.baudrate=PL_SSI_BAUD_100kHz
+		ssi.clkmap=scl
+		ssi.dimap=sda
+		ssi.domap=sda
+		ssi.direction=PL_SSI_DIRECTION_LEFT
+		ssi.zmode=PL_SSI_ZMODE_ENABLED_ON_ZERO
+		ssi.mode=PL_SSI_MODE_0
+		ssi.enabled=YES
+#ENDIF
 
 		#if SI2C_DEBUG_PRINT
 			si2c_debugprint("'"+si2c_user_signature(f)+"' register i2c #"+str(f))
@@ -138,6 +153,9 @@ public sub si2c_release(num as byte)
 end sub
 
 sub si2c_get(num as byte)
+#IF I2C_AVAILABLE
+	i2c.num=num
+#ENDIF
 	si2c_num=num
 	#if SI2C_DEBUG_PRINT
 		si2c_debugprint("#"+str(num)+" got slot")
@@ -145,6 +163,9 @@ sub si2c_get(num as byte)
 end sub
 
 sub si2c_start()
+#IF I2C_AVAILABLE
+	i2c.start()
+#ELSE
 	io.num=si2c_sda(si2c_num)
 	io.enabled=YES
 	
@@ -152,15 +173,20 @@ sub si2c_start()
 	io.lineset(si2c_sda(si2c_num),HIGH)
 	io.lineset(si2c_sda(si2c_num),LOW)
 	io.lineset(si2c_scl(si2c_num),LOW)
+#ENDIF
 end sub
 
 sub si2c_stop()
+#IF I2C_AVAILABLE
+	i2c.stop()
+#ELSE
 	io.num=si2c_sda(si2c_num)
 	io.enabled=YES
 
 	io.lineset(si2c_sda(si2c_num),LOW)
 	io.lineset(si2c_scl(si2c_num),HIGH)
 	io.lineset(si2c_sda(si2c_num),HIGH)
+#ENDIF
 end sub
 
 sub si2c_write(data as byte)
@@ -169,6 +195,9 @@ sub si2c_write(data as byte)
 	dim BitData as boolean					'Comparison result (1 or 0)
 
 	if si2c_num>3 then
+#IF I2C_AVAILABLE	
+		i2c.write(data)
+#ELSE
 		compval = &h80						'Initialize the MASK
 
 		io.num = si2c_scl(si2c_num)			'Select SSI_CLK line
@@ -202,6 +231,7 @@ sub si2c_write(data as byte)
 		io.num = si2c_scl(si2c_num)			'Emulate the ACK frame
 		io.state = HIGH
 		io.invert(si2c_scl(si2c_num))		'Finish the ACK frame
+#ENDIF
 	else
 		ssi.channel=si2c_num
 		ssi.str(chr(data),PL_SSI_ACK_RX)
@@ -213,6 +243,13 @@ function si2c_read(acknak_request as boolean) as byte
 	dim compval as byte						'Value to compare - MASK
 
 	if si2c_num>3 then
+#IF I2C_AVAILABLE
+		if acknak_request=true then
+			si2c_read = i2c.read(ACK)
+		else
+			si2c_read = i2c.read(NACK)
+		end if
+#ELSE
 		si2c_read=0
 		compval=&h80							'Initialize the MASK
 
@@ -247,7 +284,7 @@ function si2c_read(acknak_request as boolean) as byte
 		io.state=HIGH							'Set SSI_CLK line
 		io.invert(si2c_scl(si2c_num))			'Clear SSI_CLK line	
 
-
+#ENDIF
 		#if SI2C_DEBUG_PRINT
 			si2c_debugprint("i2c read data:"+ hex(si2c_read))
 		#endif
@@ -268,17 +305,23 @@ sub si2c_init()
 	for f=0 to SI2C_MAX_SLOTS-1
 		si2c_in_use(f)=NO
 		si2c_user_signature(f)=SI2C_UNUSED_SIGNATURE
-		si2c_sda(f)=PL_IO_NULL
-		si2c_scl(f)=PL_IO_NULL
 	next f
 end sub
 
 function si2c_is_busy(num as byte)as no_yes
+#IF I2C_AVAILABLE
+	if i2c.state <> I2C_IDLE then
+		si2c_is_busy=YES
+	else
+		si2c_is_busy=NO
+	end if
+#ELSE
 	if io.lineget(si2c_scl(num))=LOW then
 		si2c_is_busy=YES
 	else
 		si2c_is_busy=NO
 	end if
+#ENDIF
 end function
 
 #if SI2C_DEBUG_PRINT
