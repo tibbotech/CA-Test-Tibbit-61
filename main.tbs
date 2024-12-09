@@ -74,24 +74,23 @@ sub on_sys_timer()
 
 	if init_result = TBT61_INIT_OK then
 
-		if timer < 10 then
-			timer = timer + 1
-		else
-			sys.debugprint("VOLTAGE MEASUREMENT " + chr(13))	
-			data0 = tbt61_read_adc(tbt_channel, 0, flags) 
-			print_adc_value(data0, "V", flags)
-			data2 = tbt61_read_adc(tbt_channel, 2, flags) 
-			print_adc_value(data2, "V", flags)	
+		sys.debugprint("VOLTAGE MEASUREMENT " + chr(13))	
+		data0 = tbt61_read_adc(tbt_channel, VIN1_DIFFERENTIAL, flags) 
+		sys.debugprint("VIN1: ")
+		print_adc_value(data0, "V", flags)
+		data2 = tbt61_read_adc(tbt_channel, VIN2_DIFFERENTIAL, flags) 
+		sys.debugprint("VIN2: ")
+		print_adc_value(data2, "V", flags)	
 			
-			sys.debugprint("CURRENT MEASUREMENT " + chr(13))	
-			data4 = tbt61_read_adc(tbt_channel, 4, flags) 
-			print_adc_value(data4, "mA", flags)
-			data5 = tbt61_read_adc(tbt_channel, 5, flags) 
-			print_adc_value(data5, "mA", flags)
+		sys.debugprint("CURRENT MEASUREMENT " + chr(13))	
+		data4 = tbt61_read_adc(tbt_channel, IIN1_SINGLE_ENDED, flags) 
+		sys.debugprint("IIN1: ")
+		print_adc_value(data4, "mA", flags)
+		data5 = tbt61_read_adc(tbt_channel, IIN2_SINGLE_ENDED, flags) 
+		sys.debugprint("IIN2: ")
+		print_adc_value(data5, "mA", flags)		
 			
-			sys.debugprint(chr(13))
-		end if
-
+		sys.debugprint("------"+chr(13))
 	end if
 	
 end sub
