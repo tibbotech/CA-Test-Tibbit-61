@@ -11,7 +11,7 @@ As another approach, you can connect 0-10V output transmitters (sensors) or 4-20
 To conclude, this sample application only configures the Tibbit as a voltage and current meter and reads voltage and current values periodically.
 
 > [!TIP]
-> Avoid applying any voltages exceeding ±10V to the voltage inputs to different channels and any negative voltage to inputs in single-ended mode as this might damage or degradation to the precision of the Tibbit. 
+> Avoid applying any voltages exceeding ±10V to the voltage inputs to different channels and any negative voltage to inputs in single-ended mode as this might damage or degrade the precision of the Tibbit. 
 
 
 ## You Will Need
@@ -25,6 +25,10 @@ To conclude, this sample application only configures the Tibbit as a voltage and
 ## Connection 
 Follow the diagram below for a minimal testing setup of the Tibbit#62:
 ![The Block diagram of testing Tibbit#61-1](/Diagrams_and_Images/Connection_Diagram.png)
+
+> [!TIP]
+> Avoid conencting the TPS ground to the isolated ground. This might lead to damage to your analog sensors, Tibbit61, or TPS.
+
 
 ## The Test Program Flow
 In *on_sys_init()*, 
