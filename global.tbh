@@ -8,8 +8,8 @@ const CR_LF = chr(13) + chr(10)
 #define TBT61_PIN_CLK  PL_IO_NUM_8_RX0
 #define TBT61_PIN_MOSI PL_IO_NUM_0
 #define TBT61_PIN_MISO PL_IO_NUM_16_INT0
-#define TBT61_PIN_SCL  PL_IO_NUM_11_TX1
-#define TBT61_PIN_SDA  PL_IO_NUM_10_RX1
+#define TBT61_PIN_SCL  PL_IO_NUM_32
+#define TBT61_PIN_SDA  PL_IO_NUM_33
 
 'INCLUDES------------------------------------------------------------
 include "libraries\tbt61.tbh"
