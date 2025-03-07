@@ -58,6 +58,10 @@ sub on_sys_init()
 		sys.debugprint("Init fault: Internal voltage check fault" + chr(13))
 		init_complete = false
 		
+	case TBT61_INIT_ERROR_EEPROM:
+		sys.debugprint("Init fault: Error reading internal EEPROM" + chr(13))
+		init_complete = false
+
 	end select
 	
 	sys.debugprint("--------End of Sys_Init--------" + CR_LF)	
