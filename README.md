@@ -26,7 +26,7 @@ To conclude, this sample application only configures the Tibbit as a voltage and
 - A voltage source and/or 4-20mA current source
 
 ## Connection 
-Follow the diagram below for a minimal testing setup of the Tibbit#62:
+Follow the diagram below for a minimal testing setup of the Tibbit#61:
 ![The Block diagram of testing Tibbit#61-1](/Diagrams_and_Images/Connection_Diagram.png)
 
 > [!TIP]
