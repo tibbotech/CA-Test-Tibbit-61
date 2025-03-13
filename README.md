@@ -6,6 +6,9 @@ Both Tibbits are calibrated at factory and calibration parameters are stored on 
 
 For further information about Tibbit#61, you can see [Tibbit#61-1 documentation](https://docs.tibbo.com/tibbit_61-1) or [Tibbit#61-2 documentation](https://docs.tibbo.com/tibbit_61-2).
 
+> [!TIP]
+> Before using this test application, it is important to know that [AppBlocks](https://appblocks.io/), our no-code, in-browser, flowchart-based application development system for TPS supports Tibbit#61. AppBlocks automatically generates all the code required to support Tibbit_61. Therefore, we recommend using AppBlocks for your project. However, if you have an existing project and want to add Tibbit#61 to it, using this test application might help you significantly.
+
 This sample offers a test application that can help read the voltage applied to two differential voltage inputs (VIN1 and VIN2) as well as the current that follows into the current inputs (IIN1 and IIN2). Simply you can apply different voltages to the inputs and see their value printed on the console of TIDE. For current inputs you can connect a resistor between 1kOhm ~ 4.7kOhm between 24V output of the Tibbit and one of the current input channels (IIN1 or IIN2) to see the current measurement values between approximately 4mA and 20mA. The current flowing into the input depends on the value of the resistor and 24V output's precise value. You can validate precision using an oscilloscope or a voltmeter.
 As another approach, you can connect 0-10V output transmitters (sensors) or 4-20mA transmitters (sensors) to the analog inputs of the Tibbit to have a meaningful and close to a real-world application scenario.
 To conclude, this sample application only configures the Tibbit as a voltage and current meter and reads voltage and current values periodically.
@@ -17,7 +20,7 @@ To conclude, this sample application only configures the Tibbit as a voltage and
 ## You Will Need
 
 - A TPP3(G2) board. You can also use any other TPP boards such as TPP2G2; you might need to change the pin assignments in *global.tbh* and change platform settings in TIDE.
-- One Tibbit#61-1
+- One Tibbit#61-1 or Tibbit#61-2
 - Optionally one Tibbit#10 for the power supply
 - Optionally one Tibbit#18 to go along with Tibbit#10
 - A voltage source and/or 4-20mA current source
@@ -27,7 +30,7 @@ Follow the diagram below for a minimal testing setup of the Tibbit#62:
 ![The Block diagram of testing Tibbit#61-1](/Diagrams_and_Images/Connection_Diagram.png)
 
 > [!TIP]
-> Avoid conencting the TPS ground to the isolated ground. This might lead to damage to your analog sensors, Tibbit61, or TPS.
+> Avoid connecting the TPS ground to the isolated ground. This might lead to damage to your analog sensors, Tibbit61, or TPS.
 
 
 ## The Test Program Flow
@@ -37,7 +40,7 @@ In *on_sys_init()*,
 3. The calibration parameters are retrieved from the EEPROM to be used for compensation of the offset and non-linearity.
 
 In *on_sys_timer()*, the following process is being repeated periodically:
-1. Two differential voltage channels and two current channels are scanned and read for the voltage and current, respectively and the values are printed in Volts and mili-Amperes.
+1. Two differential voltage channels and two current channels are scanned and read for the voltage and current, respectively and the values are printed in Volts and milli-Amperes.
 
 
 ## Useful Links
